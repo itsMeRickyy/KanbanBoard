@@ -7,7 +7,7 @@ import {DndContext, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, u
 import TaskCard from "../Card/TaskCard";
 import {arrayMove} from "@dnd-kit/sortable";
 import TotalCard from "../Card/TotalCard";
-import ProgressBar from "../Card/ProgressBar";
+// import ProgressBar from "../Card/ProgressBar";
 // import ColumnContainerV2 from "./ColumnContainerV2";
 // import {SortableContext} from "@dnd-kit/sortable";
 
@@ -30,68 +30,9 @@ const defaultTasks: Task[] = [
   {
     id: "1",
     columnId: "todo",
+    title: "Task 1",
     content: "Let's make your first task",
   },
-  // {
-  //   id: "2",
-  //   columnId: "todo",
-  //   content: "Develop user registration functionality with OTP delivered on SMS after email confirmation and phone number confirmation",
-  // },
-  // {
-  //   id: "3",
-  //   columnId: "doing",
-  //   content: "Conduct security testing",
-  // },
-  // {
-  //   id: "4",
-  //   columnId: "doing",
-  //   content: "Analyze competitors",
-  // },
-  // {
-  //   id: "5",
-  //   columnId: "done",
-  //   content: "Create UI kit documentation",
-  // },
-  // {
-  //   id: "6",
-  //   columnId: "done",
-  //   content: "Dev meeting",
-  // },
-  // {
-  //   id: "7",
-  //   columnId: "done",
-  //   content: "Deliver dashboard prototype",
-  // },
-  // {
-  //   id: "8",
-  //   columnId: "todo",
-  //   content: "Optimize application performance",
-  // },
-  // {
-  //   id: "9",
-  //   columnId: "todo",
-  //   content: "Implement data validation",
-  // },
-  // {
-  //   id: "10",
-  //   columnId: "todo",
-  //   content: "Design database schema",
-  // },
-  // {
-  //   id: "11",
-  //   columnId: "todo",
-  //   content: "Integrate SSL web certificates into workflow",
-  // },
-  // {
-  //   id: "12",
-  //   columnId: "doing",
-  //   content: "Implement error logging and monitoring",
-  // },
-  // {
-  //   id: "13",
-  //   columnId: "doing",
-  //   content: "Design and implement responsive UI",
-  // },
 ];
 
 function ProjectsContainer() {
@@ -138,6 +79,7 @@ function ProjectsContainer() {
     const newTask: Task = {
       id: generateId(),
       columnId,
+      title: `Task ${tasks.length + 1}`,
       content: `let's create your task`,
     };
 
@@ -147,6 +89,7 @@ function ProjectsContainer() {
   function deleteTask(id: Id) {
     const newTasks = tasks.filter(task => task.id !== id);
     setTasks(newTasks);
+    console.log("deleting");
   }
 
   function updateTask(id: Id, content: string) {
@@ -158,6 +101,15 @@ function ProjectsContainer() {
     // const updatedTask = [...newTasks];
 
     setTasks(newTasks);
+  }
+
+  function updateTitle(id: Id, title: string) {
+    const newTitle = tasks.map(task => {
+      if (task.id !== id) return task;
+      return {...task, title};
+    });
+    // const updatedTask = [...newTasks];
+    setTasks(newTitle);
   }
 
   function createNewColumn() {
@@ -229,7 +181,7 @@ function ProjectsContainer() {
 
   return (
     <>
-      <div className="flex gap-4 w-full min-h-screen justify-center items-start my-16">
+      <div className="flex gap-4 w-full   justify-center items-start ">
         {/* Project Container */}
         <div className="bg-slate-50 w-[60%]  min-h-[85vh] rounded-3xl px-8 py-5">
           <div className="flex justify-between">
@@ -250,14 +202,28 @@ function ProjectsContainer() {
             onDragOver={onDragOver}>
             <div className="flex flex-wrap gap-10 justify-between">
               {columns.map(col => (
-                <ColumnContainer key={col.id} column={col} deleteTask={deleteTask} updateTask={updateTask} createTask={createTask} tasks={tasks.filter(task => task.columnId === col.id)} />
+                <ColumnContainer key={col.id} column={col} deleteTask={deleteTask} updateTask={updateTask} updateTitle={updateTitle} createTask={createTask} tasks={tasks.filter(task => task.columnId === col.id)} />
               ))}
             </div>
-            {createPortal(<DragOverlay>{activeTask && <TaskCard task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />}</DragOverlay>, document.body)}
+            {createPortal(
+              <DragOverlay
+                dropAnimation={{
+                  duration: 350,
+                  easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+                }}
+                style={{
+                  rotate: "3deg",
+                }}>
+                {activeTask && <TaskCard task={activeTask} deleteTask={deleteTask} updateTask={updateTask} updateTitle={updateTitle} />}
+              </DragOverlay>,
+              document.body
+            )}
           </DndContext>
         </div>
         {/* Total Container */}
         <div className="bg-slate-50 w-[18%]  min-h-[85vh] rounded-3xl py-5 relative px-5 flex flex-col gap-5">
+          <h1 className="text-xl font-bold">Projects</h1>
+
           <div className="w-full h-full  gap-2 flex-wrap flex justify-center ">
             {/* total task */}
             <TotalCard fontSize="text-xl" labelTitle="Total" count={tasks.length} bgColor="bg-blue-200" barColor="bg-blue-500" />
