@@ -11,12 +11,13 @@ interface Props {
   column: Column;
   tasks: Task[];
   createTask: (columnId: Id) => void;
+  copyTask: (id: Id) => void;
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
   updateTitle: (id: Id, content: string) => void;
 }
 
-function ColumnContainer({column, tasks, deleteTask, updateTask, createTask, updateTitle}: Props) {
+function ColumnContainer({column, tasks, deleteTask, updateTask, createTask, copyTask, updateTitle}: Props) {
   const tasksIds = useMemo(() => {
     return tasks.map(task => task.id);
   }, [tasks]);
@@ -52,7 +53,7 @@ function ColumnContainer({column, tasks, deleteTask, updateTask, createTask, upd
         <div className="flex-col flex       max-w-full overflow-x-hidden  overflow-y-auto h-[70vh]  max-h-[70vh] px-2">
           <SortableContext items={tasksIds}>
             {tasks.map(task => (
-              <TaskCard key={task.id} task={task} deleteTask={deleteTask} updateTask={updateTask} updateTitle={updateTitle} />
+              <TaskCard key={task.id} task={task} deleteTask={deleteTask} updateTask={updateTask} copyTask={copyTask} updateTitle={updateTitle} />
             ))}
           </SortableContext>
         </div>

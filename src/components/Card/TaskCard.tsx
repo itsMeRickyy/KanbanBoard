@@ -8,15 +8,17 @@ import "./style.css";
 import XIcon from "../../icons/XIcon";
 import PencilIcon from "../../icons/PencilIcon";
 import CopyIcon from "../../icons/CopyIcon";
+import LabelCard from "../Label/LabelCard";
 
 interface Props {
   task: Task;
   deleteTask: (id: Id) => void;
+  copyTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
   updateTitle: (id: Id, content: string) => void;
 }
 
-function TaskCard({task, deleteTask, updateTask, updateTitle}: Props) {
+function TaskCard({task, deleteTask, updateTask, copyTask, updateTitle}: Props) {
   // const [mouseisover, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editTitle, setEditTitle] = useState(false);
@@ -177,12 +179,27 @@ function TaskCard({task, deleteTask, updateTask, updateTitle}: Props) {
     );
   }
 
+  let labelColor = "bg-purple-300";
+
+  if (task.columnId === "todo") {
+    labelColor = "bg-blue-300";
+  } else if (task.columnId === "doing") {
+    labelColor = "bg-green-300";
+  } else if (task.columnId === "done") {
+    labelColor = "bg-purple-300";
+  }
+
+  // console.log(labelColor);
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
+      onClick={() => {
+        copyTask(task.id);
+      }}
       // onMouseEnter={() => {
       //   setMouseIsOver(true);
       // }}
@@ -191,9 +208,8 @@ function TaskCard({task, deleteTask, updateTask, updateTitle}: Props) {
       // }}
       className="bg-white min-h-[170px] max-h-[170px] h-[170px] min-w-[170px] max-w-[250px] w-[220px]  py-3 px-2 my-3 rounded-3xl text-sm shadow-xl flex flex-col  justify-between relative hover:ring-1 ">
       <div className="flex justify-between ">
-        <div className="px-4  h-8 bg-purple-300 rounded-2xl flex justify-start items-center w-[50%]">
-          <h1 className="font-bold  text-purple-900 ">{task.title}</h1>
-        </div>
+        <LabelCard label={task.title} colorVariant={labelColor} />
+
         <div>
           <button
             onClick={() => {

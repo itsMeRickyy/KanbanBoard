@@ -86,6 +86,30 @@ function ProjectsContainer() {
     setTasks([...tasks, newTask]);
   }
 
+  function copyTask(taskId: Id) {
+    // Find the task with the specified taskId
+    const taskToCopy = tasks.find(task => task.id === taskId);
+
+    if (taskToCopy) {
+      // Create a new task object with a new ID
+      const newTask: Task = {
+        id: generateId(),
+        columnId: taskToCopy.columnId,
+        title: `Copy of ${taskToCopy.title}`,
+        content: taskToCopy.content,
+      };
+
+      // Add the new task to the tasks array
+      setTasks([...tasks, newTask]);
+    }
+  }
+
+  function handleCopyTask(taskId: Id, event: React.MouseEvent<HTMLButtonElement>) {
+    if (event.altKey) {
+      copyTask(taskId);
+    }
+  }
+
   function deleteTask(id: Id) {
     const newTasks = tasks.filter(task => task.id !== id);
     setTasks(newTasks);
@@ -214,7 +238,7 @@ function ProjectsContainer() {
                 style={{
                   rotate: "3deg",
                 }}>
-                {activeTask && <TaskCard task={activeTask} deleteTask={deleteTask} updateTask={updateTask} updateTitle={updateTitle} />}
+                {activeTask && <TaskCard task={activeTask} deleteTask={deleteTask} updateTask={updateTask} copyTask={handleCopyTask} updateTitle={updateTitle} />}
               </DragOverlay>,
               document.body
             )}
@@ -226,11 +250,11 @@ function ProjectsContainer() {
 
           <div className="w-full h-full  gap-2 flex-wrap flex justify-center ">
             {/* total task */}
-            <TotalCard fontSize="text-xl" labelTitle="Total" count={tasks.length} bgColor="bg-blue-200" barColor="bg-blue-500" />
+            <TotalCard fontSize="text-xl" labelTitle="Total" count={tasks.length} bgColor="bg-blue-300" barColor="bg-blue-500" />
             {/* Work In Progress */}
-            <TotalCard fontSize="text-xl" labelTitle="In Progress" count={doingLength} bgColor="bg-orange-200" barColor="bg-orange-500" />
+            <TotalCard fontSize="text-xl" labelTitle="In Progress" count={doingLength} bgColor="bg-green-300" barColor="bg-orange-500" />
             {/* Done */}
-            <TotalCard fontSize="text-xl" labelTitle="Completed" count={doneLength} bgColor="bg-purple-200" barColor="bg-purple-500" />
+            <TotalCard fontSize="text-xl" labelTitle="Completed" count={doneLength} bgColor="bg-purple-300" barColor="bg-purple-500" />
             {/* times */}
             <TotalCard fontSize="text-sm  mt-1" labelTitle="Times" count={time} bgColor="bg-red-200 " barColor="hidden" />
           </div>
