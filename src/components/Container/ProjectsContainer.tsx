@@ -212,6 +212,7 @@ function ProjectsContainer() {
       handleCopyTask(activeTask!.id);
       console.log("task copied");
     }
+    console.log(event);
   }
 
   const holdingShift = useRef(false);
