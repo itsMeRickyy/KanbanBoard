@@ -1,9 +1,9 @@
 // import {useState} from "react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Column, Task, Id} from "../../type";
 import ColumnContainer from "./ColumnContainer";
 import {createPortal} from "react-dom";
-import {DndContext, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors} from "@dnd-kit/core";
+import {DndContext, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors, DragEndEvent} from "@dnd-kit/core";
 import TaskCard from "../Card/TaskCard";
 import {arrayMove} from "@dnd-kit/sortable";
 import TotalCard from "../Card/TotalCard";
@@ -95,7 +95,7 @@ function ProjectsContainer() {
       const newTask: Task = {
         id: generateId(),
         columnId: taskToCopy.columnId,
-        title: `Copy of ${taskToCopy.title}`,
+        title: `${taskToCopy.title}`,
         content: taskToCopy.content,
       };
 
@@ -104,11 +104,11 @@ function ProjectsContainer() {
     }
   }
 
-  function handleCopyTask(taskId: Id, event: React.MouseEvent<HTMLButtonElement>) {
-    if (event.altKey) {
-      copyTask(taskId);
-    }
-  }
+  // function handleCopyTask(taskId: Id, event: React.MouseEvent<HTMLButtonElement>) {
+  //   if (event.shiftKey) {
+  //     copyTask(taskId);
+  //   }
+  // }
 
   function deleteTask(id: Id) {
     const newTasks = tasks.filter(task => task.id !== id);
@@ -146,6 +146,8 @@ function ProjectsContainer() {
   }
 
   function onDragStart(event: DragStartEvent) {
+    console.log("STARTED DRAG, holding shift? Answer", holdingShift.current);
+
     if (event.active.data.current?.type === "Task") {
       setActiveTask(event.active.data.current.task);
       return;
@@ -198,6 +200,42 @@ function ProjectsContainer() {
     }
   }
 
+  function handleCopyTask(taskId: Id) {
+    if (holdingShift.current) {
+      copyTask(taskId);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function onDragEnd(event: DragEndEvent) {
+    if (holdingShift.current) {
+      handleCopyTask(activeTask!.id);
+      console.log("task copied");
+    }
+  }
+
+  const holdingShift = useRef(false);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      console.log(e.key);
+      // e.key -> keycode
+      if (e.shiftKey) holdingShift.current = true;
+    }
+
+    function handleKeyUp() {
+      holdingShift.current = false;
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+
+    return function cleanup() {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
   // Update the local storage whenever the columns state changes
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -219,14 +257,10 @@ function ProjectsContainer() {
               </button>
             </div>
           </div>
-          <DndContext
-            sensors={sensors}
-            onDragStart={onDragStart}
-            // onDragEnd={onDragEnd}
-            onDragOver={onDragOver}>
+          <DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
             <div className="flex flex-wrap gap-10 justify-between">
               {columns.map(col => (
-                <ColumnContainer key={col.id} column={col} deleteTask={deleteTask} updateTask={updateTask} updateTitle={updateTitle} createTask={createTask} tasks={tasks.filter(task => task.columnId === col.id)} />
+                <ColumnContainer key={col.id} column={col} deleteTask={deleteTask} updateTask={updateTask} copyTask={copyTask} updateTitle={updateTitle} createTask={createTask} tasks={tasks.filter(task => task.columnId === col.id)} />
               ))}
             </div>
             {createPortal(
@@ -238,7 +272,7 @@ function ProjectsContainer() {
                 style={{
                   rotate: "3deg",
                 }}>
-                {activeTask && <TaskCard task={activeTask} deleteTask={deleteTask} updateTask={updateTask} copyTask={handleCopyTask} updateTitle={updateTitle} />}
+                {activeTask && <TaskCard task={activeTask} deleteTask={deleteTask} updateTask={updateTask} copyTask={copyTask} updateTitle={updateTitle} />}
               </DragOverlay>,
               document.body
             )}

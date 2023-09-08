@@ -1,7 +1,7 @@
 import {useSortable} from "@dnd-kit/sortable";
 import {Id, Task} from "../../type";
 import {CSS} from "@dnd-kit/utilities";
-import {useEffect, useState} from "react";
+import {useEffect, useState, MouseEvent} from "react";
 import EditIcon from "../../icons/EditIcon";
 import TrashIcon from "../../icons/TrashIcon";
 import "./style.css";
@@ -13,7 +13,7 @@ import LabelCard from "../Label/LabelCard";
 interface Props {
   task: Task;
   deleteTask: (id: Id) => void;
-  copyTask: (id: Id) => void;
+  copyTask: (taskId: Id) => void;
   updateTask: (id: Id, content: string) => void;
   updateTitle: (id: Id, content: string) => void;
 }
@@ -45,6 +45,12 @@ function TaskCard({task, deleteTask, updateTask, copyTask, updateTitle}: Props) 
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
+
+  // if (shiftKeyPressed) {
+  //   {
+  //     copyTask(task.id);
+  //   }
+  // }
 
   const {
     setNodeRef,
@@ -79,13 +85,22 @@ function TaskCard({task, deleteTask, updateTask, copyTask, updateTitle}: Props) 
     console.log("edit title mode");
   };
 
-  // if (isDragging) {
-  //   return (
-  //     <div ref={setNodeRef} style={style} className=" min-h-[170px] max-h-[170px] h-[170px] min-w-[170px] max-w-[250px] w-[220px]   my-3 rounded-xl border-slate-900  border-2 border-dashed ">
-  //       <div className="bg-white w-full h-full opacity-80 rounded-xl "></div>
-  //     </div>
-  //   );
-  // }
+  const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (event.shiftKey) {
+      const taskId = task.id;
+      copyTask(taskId); // Call the copyTask function
+    }
+  };
+
+  let labelColor = "bg-purple-300";
+
+  if (task.columnId === "todo") {
+    labelColor = "bg-blue-300";
+  } else if (task.columnId === "doing") {
+    labelColor = "bg-green-300";
+  } else if (task.columnId === "done") {
+    labelColor = "bg-purple-300";
+  }
 
   if (isDragging) {
     if (shiftKeyPressed) {
@@ -115,7 +130,7 @@ function TaskCard({task, deleteTask, updateTask, copyTask, updateTitle}: Props) 
         {...listeners}
         className="bg-white min-h-[170px] max-h-[170px] h-[170px] min-w-[170px] max-w-[250px] w-[220px]  py-3 px-2 my-3 rounded-3xl text-sm shadow-xl flex flex-col  justify-between relative hover:ring-1 ">
         <div className="flex justify-between ">
-          <div className="px-2 h-8 bg-purple-300 rounded-2xl flex justify-center items-center w-[50%]">
+          <div className={`px-2 h-8 ${labelColor} rounded-2xl flex justify-center items-center w-[50%]`}>
             <input
               value={task.title}
               autoFocus
@@ -158,8 +173,8 @@ function TaskCard({task, deleteTask, updateTask, copyTask, updateTitle}: Props) 
         {...listeners}
         className="bg-white min-h-[170px] max-h-[170px] h-[170px] min-w-[170px] max-w-[250px] w-[220px]  py-3 px-2 my-3 rounded-3xl text-sm shadow-xl flex flex-col  justify-between relative">
         <div>
-          <div className="px-4  h-8 bg-purple-300 rounded-2xl flex justify-start items-center w-[50%]">
-            <h1 className="font-bold  text-purple-900 ">{task.title}</h1>
+          <div className={`px-2 h-8 ${labelColor} rounded-2xl flex  items-center w-[50%]`}>
+            <h1 className="font-bold  text-purple-900 ml-2">{task.title}</h1>
           </div>
         </div>
         <textarea
@@ -179,16 +194,6 @@ function TaskCard({task, deleteTask, updateTask, copyTask, updateTitle}: Props) 
     );
   }
 
-  let labelColor = "bg-purple-300";
-
-  if (task.columnId === "todo") {
-    labelColor = "bg-blue-300";
-  } else if (task.columnId === "doing") {
-    labelColor = "bg-green-300";
-  } else if (task.columnId === "done") {
-    labelColor = "bg-purple-300";
-  }
-
   // console.log(labelColor);
 
   return (
@@ -197,9 +202,7 @@ function TaskCard({task, deleteTask, updateTask, copyTask, updateTitle}: Props) 
       style={style}
       {...attributes}
       {...listeners}
-      onClick={() => {
-        copyTask(task.id);
-      }}
+      onClick={handleCardClick}
       // onMouseEnter={() => {
       //   setMouseIsOver(true);
       // }}

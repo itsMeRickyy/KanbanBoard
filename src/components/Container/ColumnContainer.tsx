@@ -11,7 +11,7 @@ interface Props {
   column: Column;
   tasks: Task[];
   createTask: (columnId: Id) => void;
-  copyTask: (id: Id) => void;
+  copyTask: (taskId: Id) => void;
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
   updateTitle: (id: Id, content: string) => void;
