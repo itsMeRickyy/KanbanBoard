@@ -244,9 +244,9 @@ function ProjectsContainer() {
 
   return (
     <>
-      <div className="flex gap-4 w-full   justify-center items-start ">
+      <div className="flex flex-col xl:flex-row my-10 gap-4 w-full   justify-center items-center xl:items-start ">
         {/* Project Container */}
-        <div className="bg-slate-50 w-[60%]  min-h-[85vh] rounded-3xl px-8 py-5">
+        <div className="bg-slate-50  xl:w-[70%] 2xl:w-[60%] min-h-[85vh] rounded-3xl px-8 2xl:px-10 py-5">
           <div className="flex justify-between">
             <h1 className="text-3xl font-bold">Projects</h1>
             <div>
@@ -280,7 +280,7 @@ function ProjectsContainer() {
           </DndContext>
         </div>
         {/* Total Container */}
-        <div className="bg-slate-50 w-[18%]  min-h-[85vh] rounded-3xl py-5 relative px-5 flex flex-col gap-5">
+        <div className="bg-slate-50 w-[56rem] min-w-[20rem] px-8 xl:w-[18%]  xl:min-h-[85vh] rounded-3xl py-5 relative  flex flex-col gap-5">
           <h1 className="text-xl font-bold">Projects</h1>
 
           <div className="w-full h-full  gap-2 flex-wrap flex justify-center ">
