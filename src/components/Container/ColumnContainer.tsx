@@ -38,7 +38,7 @@ function ColumnContainer({column, tasks, deleteTask, updateTask, createTask, cop
 
   return (
     <>
-      <div ref={setNodeRef} style={style} className=" w-[20rem]  flex flex-col max-w-[250px] mt-8 max-h-[70vh]">
+      <div ref={setNodeRef} style={style} className=" w-[20rem]  p-2 rounded-xl  flex flex-col max-w-[250px] mt-8 max-h-[70vh]">
         <div className="flex justify-between">
           <h1 className="my-2 font-bold">{column.title}</h1>
           <button

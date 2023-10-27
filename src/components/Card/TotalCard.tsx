@@ -6,14 +6,11 @@ interface Props {
   fontSize: string;
 }
 
-function TotalCard({labelTitle, count, bgColor, barColor, fontSize}: Props) {
+function TotalCard({labelTitle, count, bgColor, fontSize}: Props) {
   return (
-    <div className={`${bgColor} w-[110px] h-[85px] rounded-2xl flex flex-col justify-center items-start pl-5`}>
+    <div className={`${bgColor} w-32  rounded-2xl flex  justify-start items-center px-3 gap-2 shadow-xl`}>
       <h1 className="text-sm">{labelTitle}</h1>
-      <div className="flex gap-2 items-center">
-        <div className={`${barColor} h-6 w-1  rounded-full`} />
-        <h1 className={`${fontSize} font-bold`}>{count}</h1>
-      </div>
+      <h1 className={`${fontSize} font-bold`}>{count}</h1>
     </div>
   );
 }

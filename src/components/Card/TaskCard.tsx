@@ -98,6 +98,8 @@ function TaskCard({task, deleteTask, updateTask, copyTask, updateTitle}: Props) 
     labelColor = "bg-blue-300";
   } else if (task.columnId === "doing") {
     labelColor = "bg-green-300";
+  } else if (task.columnId === "review") {
+    labelColor = "bg-yellow-200";
   } else if (task.columnId === "done") {
     labelColor = "bg-purple-300";
   }

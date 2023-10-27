@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import {Column, Task, Id} from "../../type";
 import ColumnContainer from "./ColumnContainer";
 import {createPortal} from "react-dom";
-import {DndContext, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors, DragEndEvent} from "@dnd-kit/core";
+import {DndContext, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors, DragEndEvent, TouchSensor} from "@dnd-kit/core";
 import TaskCard from "../Card/TaskCard";
 import {arrayMove} from "@dnd-kit/sortable";
 import TotalCard from "../Card/TotalCard";
@@ -19,6 +19,10 @@ const defaultCols: Column[] = [
   {
     id: "doing",
     title: "Work in progress",
+  },
+  {
+    id: "review",
+    title: "On Review",
   },
   {
     id: "done",
@@ -72,6 +76,12 @@ function ProjectsContainer() {
       activationConstraint: {
         distance: 10,
       },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 300,
+        tolerance: 5,
+      },
     })
   );
 
@@ -121,9 +131,6 @@ function ProjectsContainer() {
       if (task.id !== id) return task;
       return {...task, content};
     });
-
-    // const updatedTask = [...newTasks];
-
     setTasks(newTasks);
   }
 
@@ -249,7 +256,15 @@ function ProjectsContainer() {
         <div className="bg-slate-50  xl:w-[70%] 2xl:w-[60%] min-h-[85vh] rounded-3xl px-8 2xl:px-10 py-5">
           <div className="flex justify-between">
             <h1 className="text-3xl font-bold">Projects</h1>
-            <div>
+            <div className="flex gap-2  ">
+              <div className="flex gap-2">
+                {/* total task */}
+                <TotalCard fontSize="text-xl" labelTitle="Total" count={tasks.length} bgColor="bg-blue-300" barColor="bg-blue-500" />
+                {/* Work In Progress */}
+                <TotalCard fontSize="text-xl" labelTitle="In Progress" count={doingLength} bgColor="bg-green-300" barColor="bg-orange-500" />
+                {/* Done */}
+                <TotalCard fontSize="text-xl" labelTitle="Completed" count={doneLength} bgColor="bg-purple-300" barColor="bg-purple-500" />
+              </div>
               <button onClick={() => createTask("todo")} className="px-5 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-700 shadow-xl">
                 Create Project
               </button>
@@ -279,11 +294,11 @@ function ProjectsContainer() {
             )}
           </DndContext>
         </div>
-        {/* Total Container */}
-        <div className="bg-slate-50 w-[56rem] min-w-[20rem] px-8 xl:w-[18%]  xl:min-h-[85vh] rounded-3xl py-5 relative  flex flex-col gap-5">
+        {/* right side bar*/}
+        <div className="bg-slate-50 w-[56rem] min-w-[20rem] hidden px-8 xl:w-[18%]  xl:min-h-[85vh] rounded-3xl py-5 relative  flex flex-col gap-5">
           <h1 className="text-xl font-bold">Projects</h1>
 
-          <div className="w-full h-full  gap-2 flex-wrap flex justify-center ">
+          <div className="w-full h-full  gap-2 flex-wrap flex flex-col justify-center ">
             {/* total task */}
             <TotalCard fontSize="text-xl" labelTitle="Total" count={tasks.length} bgColor="bg-blue-300" barColor="bg-blue-500" />
             {/* Work In Progress */}
@@ -291,7 +306,7 @@ function ProjectsContainer() {
             {/* Done */}
             <TotalCard fontSize="text-xl" labelTitle="Completed" count={doneLength} bgColor="bg-purple-300" barColor="bg-purple-500" />
             {/* times */}
-            <TotalCard fontSize="text-sm  mt-1" labelTitle="Times" count={time} bgColor="bg-red-200 " barColor="hidden" />
+            {/* <TotalCard fontSize="text-sm  mt-1" labelTitle="Times" count={time} bgColor="bg-red-200 " barColor="hidden" /> */}
           </div>
           {/* <ProgressBar circleWidth={85} percentage={50} /> */}
         </div>
