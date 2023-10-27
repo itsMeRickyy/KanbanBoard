@@ -47,22 +47,6 @@ function ProjectsContainer() {
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timerID = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => {
-      clearInterval(timerID);
-    };
-  }, []);
-
-  const time = currentTime.toLocaleTimeString();
-
-  // console.log(`time = ${time}`);
-
   const doingLength = tasks.filter(task => task.columnId === "doing").length;
   const doneLength = tasks.filter(task => task.columnId === "done").length;
 
@@ -295,7 +279,7 @@ function ProjectsContainer() {
           </DndContext>
         </div>
         {/* right side bar*/}
-        <div className="bg-slate-50 w-[56rem] min-w-[20rem] hidden px-8 xl:w-[18%]  xl:min-h-[85vh] rounded-3xl py-5 relative  flex flex-col gap-5">
+        <div className="bg-slate-50 w-[56rem] min-w-[20rem] hidden px-8 xl:w-[18%]  xl:min-h-[85vh] rounded-3xl py-5 relative  flex-col gap-5">
           <h1 className="text-xl font-bold">Projects</h1>
 
           <div className="w-full h-full  gap-2 flex-wrap flex flex-col justify-center ">
@@ -305,8 +289,6 @@ function ProjectsContainer() {
             <TotalCard fontSize="text-xl" labelTitle="In Progress" count={doingLength} bgColor="bg-green-300" barColor="bg-orange-500" />
             {/* Done */}
             <TotalCard fontSize="text-xl" labelTitle="Completed" count={doneLength} bgColor="bg-purple-300" barColor="bg-purple-500" />
-            {/* times */}
-            {/* <TotalCard fontSize="text-sm  mt-1" labelTitle="Times" count={time} bgColor="bg-red-200 " barColor="hidden" /> */}
           </div>
           {/* <ProgressBar circleWidth={85} percentage={50} /> */}
         </div>
